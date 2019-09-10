@@ -2,25 +2,38 @@
 # file: roles/docker-mantisbt/tasks/restore.yaml
 
 # *****************************************************************************
+# Setup the directory where the backup and restore is to take place
+
+- name: restore dir
+  file:
+    state: directory
+    path: '{{ mantisbt_docker_restore_dir }}'
+    owner: root
+    group: tape
+    mode: 'u=rwx,g=rwx,o=rx'
+    recurse: no
+    setype: svirt_sandbox_file_t
+
+# *****************************************************************************
 # Get data from tape
 
 - name: exists - Static
   stat:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_static_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_static_backup_file }}'
     get_checksum: False
     get_md5: False
   register: st_mantisbt_static_archive
 
 - name: exists - SQL (files table)
   stat:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_database_files_table_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_database_files_table_backup_file }}'
     get_checksum: False
     get_md5: False
   register: st_mantisbt_files_table_SQL_file
 
 - name: exists - SQL (remaining tables)
   stat:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_database_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_database_backup_file }}'
     get_checksum: False
     get_md5: False
   register: st_mantisbt_SQL_file
@@ -36,7 +49,7 @@
 
 - name: permissions - Static
   file:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_static_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_static_backup_file }}'
     state: touch
     owner: root
     group: root
@@ -44,7 +57,7 @@
 
 - name: permissions - SQL (files table)
   file:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_database_files_table_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_database_files_table_backup_file }}'
     state: touch
     owner: root
     group: root
@@ -52,7 +65,7 @@
 
 - name: permissions - SQL (remaining tables)
   file:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_database_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_database_backup_file }}'
     state: touch
     owner: root
     group: root
@@ -60,21 +73,21 @@
 
 - name: exists - Static
   stat:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_static_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_static_backup_file }}'
     get_checksum: False
     get_md5: False
   register: st_mantisbt_static_archive
 
 - name: exists - SQL (files table)
   stat:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_database_files_table_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_database_files_table_backup_file }}'
     get_checksum: False
     get_md5: False
   register: st_mantisbt_files_table_SQL_file
 
 - name: exists - SQL (remaining tables)
   stat:
-    path: '{{ host_mantisbt_docker_restore_dir }}{{ mantisbt_database_backup_file }}'
+    path: '{{ mantisbt_docker_restore_dir }}{{ mantisbt_database_backup_file }}'
     get_checksum: False
     get_md5: False
   register: st_mantisbt_SQL_file
@@ -93,7 +106,7 @@
 
 - name: Remove - Static and SQL
   file:
-    path: '{{ host_mantisbt_docker_restore_dir }}'
+    path: '{{ mantisbt_docker_restore_dir }}'
     state: absent
 
 - name: State file
